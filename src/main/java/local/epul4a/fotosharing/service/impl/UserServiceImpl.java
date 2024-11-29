@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static local.epul4a.fotosharing.enums.RoleType.ROLE_ADMIN;
+
 @Service
 public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
@@ -32,7 +35,7 @@ public class UserServiceImpl implements UserService {
         //encrypt the password once we integrate spring security
         //user.setPassword(userDto.getPassword());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        Role role = roleRepository.findByName("ROLE_ADMIN");
+        Role role = roleRepository.findByName(ROLE_ADMIN);
         if(role == null){
             role = checkRoleExist();
         }
@@ -59,7 +62,7 @@ public class UserServiceImpl implements UserService {
     }
     private Role checkRoleExist() {
         Role role = new Role();
-        role.setName("ROLE_ADMIN");
+        role.setName(ROLE_ADMIN);
         return roleRepository.save(role);
     }
 }

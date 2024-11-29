@@ -1,6 +1,7 @@
 package local.epul4a.fotosharing.entity;
 
 import jakarta.persistence.*;
+import local.epul4a.fotosharing.enums.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,7 @@ public class Role
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable=false, unique=true)
-    private String name;
+    private RoleType name;
     @ManyToMany(mappedBy="roles")
     private List<User> users;
 }

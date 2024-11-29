@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,4 +35,6 @@ public class User
             inverseJoinColumns={@JoinColumn(name="ROLE_ID",
                     referencedColumnName="ID")})
     private List<Role> roles = new ArrayList<>();
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
