@@ -22,7 +22,7 @@ public class AuthController {
     }
 
     @GetMapping("index")
-    public String home() {
+    public String index() {
         return "index";
     }
 

@@ -10,6 +10,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import static local.epul4a.fotosharing.enums.RoleType.ADMIN;
+
 @Configuration
 @EnableWebSecurity
 public class SpringSecurity {
@@ -25,12 +28,16 @@ public class SpringSecurity {
                 .authorizeHttpRequests((authorize) ->
                         authorize.requestMatchers("/register/**").permitAll()
                                 .requestMatchers("/index").permitAll()
-                                .requestMatchers("/users").hasRole("ADMIN")
+                                .requestMatchers("/users").hasRole(ADMIN.name())
+                                .requestMatchers("/accueil").permitAll()
+                                .requestMatchers("/photos").permitAll()
+                                .requestMatchers("/photos/nouveau").permitAll()
+                                .requestMatchers("/albums").permitAll()
                 ).formLogin(
                         form -> form
                                 .loginPage("/login")
                                 .loginProcessingUrl("/login")
-                                .defaultSuccessUrl("/users")
+                                .defaultSuccessUrl("/accueil")
                                 .permitAll()
                 ).logout(
                         logout -> logout
