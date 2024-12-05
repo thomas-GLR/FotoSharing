@@ -29,4 +29,14 @@ public class Photo {
     public Photo() {
 
     }
+
+    public Photo(String title, String description, String url, Visibility visibility, User owner) {
+        this.title = title;
+        this.description = description;
+        this.url = url;
+        this.visibility = visibility;
+        this.owner = owner;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
 }
