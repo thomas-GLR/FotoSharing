@@ -1,4 +1,4 @@
-<header th:fragment="header">
+<header th:fragment="header" xmlns:sec="http://www.w3.org/1999/xhtml">
     <nav class="navbar navbar-expand-md bg-dark navbar-dark mb-3">
         <a class="navbar-brand" th:href="@{/images}">
             Epul4A
@@ -19,6 +19,9 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/albums}">Album</a>
+                </li>
+                <li sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a class="nav-link" th:href="@{/users}">Gérer les utilisateurs</a>
                 </li>
             </ul>
         </div>

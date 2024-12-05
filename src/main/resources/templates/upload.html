@@ -22,7 +22,14 @@ EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
             method="post"
             th:action="@{/photos/upload}"
             enctype="multipart/form-data">
-        <input id="input-file" type="file" name="file" accept="image/png, image/jpeg"/>
+        <input id="input-file" type="file" name="file" accept="image/png, image/jpeg, image/gif"/>
+
+        <label for="title-input">Titre de la photo</label>
+        <input id="title-input" type="text" name="title" />
+
+        <label for="description-input">Description de la photo</label>
+        <textarea id="description-input" name="description"></textarea>
+
         <button class="btn btn-sm btn-outline-success float-right" type="submit">
             Upload
         </button>

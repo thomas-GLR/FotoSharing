@@ -32,6 +32,7 @@ public class SpringSecurity {
                                 .requestMatchers("/accueil").permitAll()
                                 .requestMatchers("/photos").permitAll()
                                 .requestMatchers("/photos/nouveau").permitAll()
+                                .requestMatchers("/photos/upload").permitAll()
                                 .requestMatchers("/albums").permitAll()
                 ).formLogin(
                         form -> form
