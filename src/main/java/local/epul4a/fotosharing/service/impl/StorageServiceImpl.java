@@ -5,9 +5,13 @@ import local.epul4a.fotosharing.entity.User;
 import local.epul4a.fotosharing.enums.Visibility;
 import local.epul4a.fotosharing.repository.PhotoRepository;
 import local.epul4a.fotosharing.service.StorageService;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,6 +43,22 @@ public class StorageServiceImpl implements StorageService {
             }
 
             throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public Resource load(Long id) {
+        try {
+            Photo photo = photoRepository.findById(id).get();
+            Path file = new File(photo.getUrl()).toPath();
+            Resource resource = new UrlResource(file.toUri());
+
+            if (resource.exists() || resource.isReadable()) {
+                return resource;
+            } else {
+                throw new RuntimeException("Impossible de lire le fichier !");
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Erreur : " + e.getMessage());
         }
     }
 }

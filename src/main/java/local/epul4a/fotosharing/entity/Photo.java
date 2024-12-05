@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Getter
 @Setter
@@ -38,5 +40,23 @@ public class Photo {
         this.owner = owner;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public String visibilityName() {
+        return getVisibility().name();
+    }
+
+    public String ownerName() {
+        return getOwner().getName();
+    }
+
+    public String createdAtToString() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        return getCreatedAt().format(formatter);
+    }
+
+    public String updatedAtToString() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        return getUpdatedAt().format(formatter);
     }
 }
