@@ -6,5 +6,5 @@ import local.epul4a.fotosharing.entity.User;
 import java.util.List;
 
 public interface PartageService {
-    public List<PhotoDto> getAllSharedPhoto(User currentUser);
+    public List<PhotoDto> getAllSharedAndPublicPhoto(User currentUser);
 }

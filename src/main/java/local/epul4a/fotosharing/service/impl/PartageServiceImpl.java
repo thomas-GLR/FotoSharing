@@ -16,7 +16,7 @@ public class PartageServiceImpl implements PartageService {
     public PartageServiceImpl(PartageRepository partageRepository) {
         this.partageRepository = partageRepository;
     }
-    public List<PhotoDto> getAllSharedPhoto(User currentUser) {
-       return partageRepository.findSharedPhotosWithUserId(currentUser, Visibility.PUBLIC).stream().map(PhotoDto::new).toList();
+    public List<PhotoDto> getAllSharedAndPublicPhoto(User currentUser) {
+       return partageRepository.findSharedPhotosWithUserId(currentUser).stream().map(PhotoDto::new).toList();
     }
 }

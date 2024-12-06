@@ -15,10 +15,10 @@ public class Commentaire {
     private Long id;
     @Column(nullable=false)
     private String text;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "photo_id", nullable = false)
     private Photo photo;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)
     private User author;
     private LocalDateTime createdAt;

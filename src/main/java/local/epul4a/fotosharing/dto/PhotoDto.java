@@ -17,6 +17,7 @@ public class PhotoDto {
     private String ownerName;
     private String createdAt;
     private String updatedAt;
+    private boolean checked;
 
     public PhotoDto(Photo photo) {
         this.id = photo.getId();
@@ -28,5 +29,11 @@ public class PhotoDto {
         this.ownerName = photo.ownerName();
         this.createdAt = photo.createdAtToString();
         this.updatedAt = photo.updatedAtToString();
+        this.checked = false;
+    }
+
+    public PhotoDto(Photo photo, boolean isChecked) {
+        this(photo);
+        this.checked = isChecked;
     }
 }

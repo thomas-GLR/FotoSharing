@@ -12,6 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import static local.epul4a.fotosharing.enums.RoleType.ADMIN;
+import static local.epul4a.fotosharing.enums.RoleType.MODERATOR;
 
 @Configuration
 @EnableWebSecurity
@@ -28,13 +29,10 @@ public class SpringSecurity {
                 .authorizeHttpRequests((authorize) ->
                         authorize.requestMatchers("/register/**").permitAll()
                                 .requestMatchers("/index").permitAll()
-                                .requestMatchers("/users").hasRole(ADMIN.name())
+                                .requestMatchers("/users/**").hasRole(ADMIN.name())
                                 .requestMatchers("/accueil").permitAll()
                                 .requestMatchers("/photos/**").permitAll()
-//                                .requestMatchers("/photos/nouveau").permitAll()
-//                                .requestMatchers("/photos/{id:.+}").permitAll()
-//                                .requestMatchers("/photos/upload").permitAll()
-                                .requestMatchers("/albums").permitAll()
+                                .requestMatchers("/albums/**").permitAll()
                 ).formLogin(
                         form -> form
                                 .loginPage("/login")

@@ -2,11 +2,11 @@ package local.epul4a.fotosharing.controller;
 
 import local.epul4a.fotosharing.dto.PhotoDto;
 import local.epul4a.fotosharing.entity.User;
+import local.epul4a.fotosharing.enums.Visibility;
 import local.epul4a.fotosharing.service.PartageService;
 import local.epul4a.fotosharing.service.PhotoService;
 import local.epul4a.fotosharing.service.StorageService;
 import local.epul4a.fotosharing.service.UserService;
-import local.epul4a.fotosharing.service.impl.UserServiceImpl;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -41,11 +41,13 @@ public class PhotoController {
     @GetMapping("/photos")
     public String getListPhotos(Model model, Authentication authentication) {
         User currentUser = this.userService.findByEmail(authentication.getName());
-        List<PhotoDto> photoDtos = this.photoService.getAllPhotos(currentUser);
-        List<PhotoDto> photoShared = this.partageService.getAllSharedPhoto(currentUser);
+        List<PhotoDto> photoDtos = this.photoService.getUserPhotos(currentUser);
+        List<PhotoDto> photoShared = this.partageService.getAllSharedAndPublicPhoto(currentUser);
+        List<PhotoDto> photoToValidate = this.photoService.getPhotoForValidation();
 
         model.addAttribute("images", photoDtos);
         model.addAttribute("photoShared", photoShared);
+        model.addAttribute("photoToValidate", photoToValidate);
 
         return "photos";
     }
@@ -74,6 +76,7 @@ public class PhotoController {
             } catch (Exception e) {
                 message = "Impossible de télécharger l'image : " + file.getOriginalFilename() + ". Erreur : " + e.getMessage();
                 model.addAttribute("message", message);
+                return "upload";
             }
 
             return "redirect:/photos";
@@ -90,5 +93,32 @@ public class PhotoController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+    }
+
+    @PostMapping("/photos/editer/{id:.+}")
+    public String editImage(@PathVariable Long id,
+                            @RequestParam("visibility") Visibility visibility,
+                            @RequestParam("title") String title,
+                            @RequestParam("description") String description) {
+        this.photoService.editer(id, title, description, visibility);
+        return "redirect:/photos";
+    }
+
+    @GetMapping("/photos/delete/{id:.+}")
+    public String deleteImage(@PathVariable Long id) {
+        this.photoService.delete(id);
+        return "redirect:/photos";
+    }
+
+    @GetMapping("/photos/valider/{id:.+}")
+    public String validateImage(@PathVariable Long id) {
+        this.photoService.validatePhoto(id, true);
+        return "redirect:/photos";
+    }
+
+    @GetMapping("/photos/refuser/{id:.+}")
+    public String noValidateImage(@PathVariable Long id) {
+        this.photoService.validatePhoto(id, false);
+        return "redirect:/photos";
     }
 }

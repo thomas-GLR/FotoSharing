@@ -21,10 +21,10 @@ public class Album {
     private String name;
     private String description;
     private Visibility visibility;
-    @ManyToOne( cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
-    @ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name="album_photo",
             joinColumns={@JoinColumn(name="album_id", referencedColumnName="id")},
@@ -36,5 +36,9 @@ public class Album {
 
     public Album() {
 
+    }
+
+    public void clearPhotos() {
+        photos.clear();
     }
 }

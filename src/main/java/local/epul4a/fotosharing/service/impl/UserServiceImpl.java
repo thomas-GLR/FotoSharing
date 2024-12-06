@@ -9,9 +9,11 @@ import local.epul4a.fotosharing.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
 import static local.epul4a.fotosharing.enums.RoleType.USER;
 
 @Service
@@ -52,17 +54,31 @@ public class UserServiceImpl implements UserService {
         return users.stream().map(this::convertEntityToDto)
                 .collect(Collectors.toList());
     }
+    @Override
+    public List<String> findAllRoles() {
+        return roleRepository.findAll().stream().map(Role::getName).toList();
+    }
     private UserDto convertEntityToDto(User user){
         UserDto userDto = new UserDto();
+        userDto.setId(user.getId());
         String[] name = user.getName().split(" ");
         userDto.setFirstName(name[0]);
         userDto.setLastName(name[1]);
         userDto.setEmail(user.getEmail());
+        userDto.setRoleName(user.role());
         return userDto;
     }
     private Role checkRoleExist() {
         Role role = new Role();
         role.setName(ROLE_PREFIX + USER.name());
         return roleRepository.save(role);
+    }
+
+    @Override
+    public void modifyUser(Long id, String name) {
+        User user = this.userRepository.findById(id).get();
+        Role role = this.roleRepository.findByName(name);
+        user.changeRole(role);
+        this.userRepository.save(user);
     }
 }

@@ -7,4 +7,5 @@ import org.springframework.web.multipart.MultipartFile;
 public interface StorageService {
     public void save(MultipartFile file, User owner, String title, String description);
     public Resource load(Long id);
+    public boolean deleteFile(String url);
 }

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr"
-      xmlns:th="http://www.thymeleaf.org" >
+      xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Photos</title>
@@ -40,7 +40,12 @@
                 <td><a th:href="@{${image.url}}">Download</a></td>
                 <td>[[${image.visibility}]]</td>
                 <td>
-                    <a th:href="@{'/images/delete/' + ${image.title} + '/' + ${image.id}}" th:fileName="${image.title}" id="btnDelete"
+                    <a th:attr="data-url=${image.url},data-title=${image.title},
+                    data-description=${image.description},data-visibility=${image.visibility},
+                    data-created=${image.createdAt},data-updated=${image.updatedAt},data-auteur=${image.ownerName}"
+                            th:href="@{'/photos/editer/' + ${image.id}}" th:fileName="${image.title}" id="btnEdit"
+                       title="Editer l'image" class="fa-regular fa-trash-can icon-dark btn-edit">Editer</a>
+                    <a th:href="@{'/photos/delete/' + ${image.id}}" th:fileName="${image.title}" id="btnDelete"
                        title="Supprimer cette image" class="fa-regular fa-trash-can icon-dark btn-delete">Supprimer</a>
                 </td>
             </tr>
@@ -65,7 +70,6 @@
                 <th scope="col">Titre</th>
                 <th scope="col">Link</th>
                 <th scope="col">Visibilité</th>
-                <th scope="col">Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -80,10 +84,6 @@
                 <td>[[${image.title}]]</td>
                 <td><a th:href="@{${image.url}}">Download</a></td>
                 <td>[[${image.visibility}]]</td>
-                <td>
-                    <a th:href="@{'/images/delete/' + ${image.title} + '/' + ${image.id}}" th:fileName="${image.title}" id="btnDeleteSharedPhoto"
-                       title="Supprimer cette image" class="fa-regular fa-trash-can icon-dark btn-delete">Supprimer</a>
-                </td>
             </tr>
             </tbody>
         </table>
@@ -91,6 +91,93 @@
 
     <div th:unless="${photoShared.size() > 0}">
         <span>Vous n'avez aucune photos partagées</span>
+    </div>
+</div>
+
+
+<!--photos modérateur / administrateur-->
+<div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR')" class="container-fluid" style="max-width: 600px; margin: 0 auto;">
+    <h2 class="text-center">Photos à valider</h2>
+
+    <div th:if="${photoToValidate.size() > 0}">
+        <table class="table table-hover">
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">Image</th>
+                <th scope="col">Titre</th>
+                <th scope="col">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="image : ${photoToValidate}">
+                <td>
+                    <a href="#" class="image-link"
+                       th:attr="data-url=${image.url},data-title=${image.title},data-description=${image.description},data-visibility=${image.visibility},data-created=${image.createdAt},data-updated=${image.updatedAt},data-auteur=${image.ownerName}">
+                        <img th:src="@{${image.url}}" alt="${image.name}"
+                             height="60px" data-bs-toggle="modal" data-bs-target="#image-modal" />
+                    </a>
+                </td>
+                <td>[[${image.title}]]</td>
+                <td>
+                    <a th:href="@{'/photos/valider/' + ${image.id}}"
+                       title="Supprimer cette image" class="fa-regular fa-trash-can icon-dark">Valider</a>
+                    <a th:href="@{'/photos/refuser/' + ${image.id}}"
+                       title="Supprimer cette image" class="fa-regular fa-trash-can icon-dark">Refuser</a>
+                    <a th:href="@{'/photos/delete/' + ${image.id}}"
+                       title="Supprimer cette image" class="fa-regular fa-trash-can icon-dark">Supprimer</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:unless="${photoToValidate.size() > 0}">
+        <span>Vous n'avez aucune photos à valider</span>
+    </div>
+</div>
+
+<!-- Modal editer -->
+<div class="modal fade" id="editerModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editerModalLabel">Image Details</h5>
+                <button id="closeEditModal" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body text-center">
+                <form
+                        id="editForm"
+                        method="post"
+                        enctype="multipart/form-data">
+
+                    <label for="title-input">Titre de la photo</label>
+                    <input id="title-input" type="text" name="title" />
+
+                    <label for="description-input">Description de la photo</label>
+                    <textarea id="description-input" name="description"></textarea>
+
+                    <fieldset>
+                        <legend>Visibilité de l'image :</legend>
+
+                        <div>
+                            <input type="radio" id="public-radio" name="visibility" checked />
+                            <label for="public-radio">Publique</label>
+                        </div>
+
+                        <div>
+                            <input type="radio" id="private-radio" name="visibility" />
+                            <label for="private-radio">Privée</label>
+                        </div>
+                    </fieldset>
+
+                    <div class="modal-footer">
+                        <button id="editBtn" class="btn btn-danger" type="submit">Editer l'image</button>
+                        <button class="btn btn-secondary" id="closeEditButton">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -121,9 +208,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Confirmation de la suppression</h5>
-                <button type="button" class="close" data-dismiss="modal">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button id="closeDeleteModal" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <div class="modal-body">
@@ -132,7 +217,7 @@
 
             <div class="modal-footer">
                 <a type="button" id="yesBtn" class="btn btn-danger">Yes</a>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <button class="btn btn-secondary" id="closeDeleteButton">Annuler</button>
             </div>
         </div>
     </div>
@@ -166,14 +251,47 @@
                 imageModal.show();
             });
         });
+
         document.querySelectorAll(".btn-delete").forEach(function (element) {
             element.addEventListener("click", function (event) {
                 event.preventDefault();
                 const link = element;
                 const fileName = link.getAttribute("fileName");
+                document.getElementById("closeDeleteButton").addEventListener("click", function (event) {
+                    event.preventDefault();
+                    document.getElementById("closeDeleteModal").click();
+                })
                 document.getElementById("yesBtn").href = link.href;
                 document.getElementById("confirmText").innerHTML = "Voulez-vous supprimer le fichier ? : <strong>" + fileName + "</strong>?";
                 const confirmModal = new bootstrap.Modal(document.getElementById("confirmModal"));
+                confirmModal.show();
+            });
+        });
+
+        document.querySelectorAll(".btn-edit").forEach(function (element) {
+            element.addEventListener("click", function (event) {
+
+                event.preventDefault();
+                document.getElementById("closeEditButton").addEventListener("click", function (event) {
+                    event.preventDefault();
+                    document.getElementById("closeEditModal").click();
+                })
+                const title = element.getAttribute("data-title");
+                const description = element.getAttribute("data-description");
+                const visibility = element.getAttribute("data-visibility");
+
+                document.getElementById("title-input").value = title;
+                document.getElementById("description-input").value = description;
+                document.getElementById("public-radio").value = "PUBLIC"
+                document.getElementById("private-radio").value = "PRIVATE"
+                if (visibility === "PUBLIC") {
+                    document.getElementById("public-radio").checked = true;
+                } else {
+                    document.getElementById("private-radio").checked = true;
+                }
+
+                document.getElementById("editForm").action = element.href;
+                const confirmModal = new bootstrap.Modal(document.getElementById("editerModal"));
                 confirmModal.show();
             });
         });

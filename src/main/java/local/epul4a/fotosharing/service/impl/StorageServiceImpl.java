@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -58,6 +59,15 @@ public class StorageServiceImpl implements StorageService {
                 throw new RuntimeException("Impossible de lire le fichier !");
             }
         } catch (MalformedURLException e) {
+            throw new RuntimeException("Erreur : " + e.getMessage());
+        }
+    }
+
+    public boolean deleteFile(String url) {
+        try {
+            Path file = Paths.get(url);
+            return Files.deleteIfExists(file);
+        } catch (IOException e) {
             throw new RuntimeException("Erreur : " + e.getMessage());
         }
     }

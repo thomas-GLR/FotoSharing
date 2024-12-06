@@ -21,4 +21,5 @@ public class UserDto
     private String email;
     @NotEmpty(message = "Le mot de passe ne doit pas être vide")
     private String password;
+    private String roleName;
 }

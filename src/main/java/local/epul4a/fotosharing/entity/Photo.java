@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 @Getter
 @Setter
@@ -22,11 +21,12 @@ public class Photo {
     @Column(nullable=false)
     private String url;
     private Visibility visibility;
-    @ManyToOne( cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private boolean validate;
 
     public Photo() {
 
@@ -38,6 +38,7 @@ public class Photo {
         this.url = url;
         this.visibility = visibility;
         this.owner = owner;
+        this.validate = false;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }

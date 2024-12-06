@@ -46,6 +46,16 @@
             <td th:text="${user.firstName}"></td>
             <td th:text="${user.lastName}"></td>
             <td th:text="${user.email}"></td>
+            <td>
+                <form method="post" th:action="@{'/users/modifier-role/'  + ${user.id}}" >
+                    <label for="roles">Choose a car:</label>
+                    <select name="role" id="roles">
+                        <option th:each="role: ${roles}" th:value="${role}" th:text="${role}" th:selected="${role == user.roleName}"></option>
+                    </select>
+                    <br><br>
+                    <button type="submit">Modifier le rôle</button>
+                </form>
+            </td>
         </tr>
         </tbody>
     </table>

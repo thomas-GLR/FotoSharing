@@ -2,14 +2,13 @@ package local.epul4a.fotosharing.controller;
 
 import jakarta.validation.Valid;
 import local.epul4a.fotosharing.dto.UserDto;
+import local.epul4a.fotosharing.entity.Role;
 import local.epul4a.fotosharing.entity.User;
 import local.epul4a.fotosharing.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -59,7 +58,15 @@ public class AuthController {
     @GetMapping("/users")
     public String listRegisteredUsers(Model model) {
         List<UserDto> users = userService.findAllUsers();
+        List<String> roles = userService.findAllRoles();
         model.addAttribute("users", users);
+        model.addAttribute("roles", roles);
         return "users";
+    }
+
+    @PostMapping("/users/modifier-role/{id:.+}")
+    public String changeUserRole(@PathVariable("id") Long id, @RequestParam String role) {
+        this.userService.modifyUser(id, role);
+        return "redirect:/users";
     }
 }
