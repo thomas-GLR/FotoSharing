@@ -13,5 +13,17 @@ EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
 </head>
 <body>
 <div th:replace="fragments/header :: header"></div>
+<h1>Photos</h1>
+<ul>
+    <li>Voir toutes les photos</li>
+    <li th:each="album : ${albums}"></li>
+</ul>
+<h1>Albums</h1>
+<ul>
+    <li>Voir toutes les photos</li>
+    <li th:each="album : ${albums}"></li>
+</ul>
+<h1>Liste des photos</h1>
+<table></table>
 </body>
 </html>

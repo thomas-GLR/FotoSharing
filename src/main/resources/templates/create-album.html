@@ -50,7 +50,7 @@
                 <tbody>
                 <tr th:each="image : ${images}">
                     <td>
-                        <input type="checkbox" name="photos" th:value="${image.id}" />
+                        <input type="checkbox" name="photos" th:value="${image.id}" th:checked="${image.checked}" />
                         <a href="#" class="image-link"
                            th:attr="data-url=${image.url},data-title=${image.title},data-description=${image.description},data-visibility=${image.visibility},data-created=${image.createdAt},data-updated=${image.updatedAt},data-auteur=${image.ownerName}">
                             <img th:src="@{${image.url}}" alt="${image.name}"

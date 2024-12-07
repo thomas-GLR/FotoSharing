@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 public class AlbumController {
@@ -57,12 +59,21 @@ public class AlbumController {
         AlbumDto album = this.albumService.getAlbum(id);
         List<PhotoDto> photos = this.photoService.getAllPhotos(user);
         List<PhotoDto> photosFiltrer = new ArrayList<>();
-        // TODO filtrer
-//        album.getPhotos().forEach(albumPhoto -> {
-//            photosFiltrer = photos.stream().filter(photo -> photo.getId() != albumPhoto.getId()).toList();
-//        });
+
+        for(PhotoDto photo: photos) {
+            boolean isPhotoAlreadyInAlbum = album.getPhotos().stream()
+                    .anyMatch(albumPhoto -> Objects.equals(photo.getId(), albumPhoto.getId()));
+            if (!isPhotoAlreadyInAlbum) {
+                photosFiltrer.add(photo);
+            }
+        }
+
+        photosFiltrer.addAll(album.getPhotos());
+        Comparator<PhotoDto> photoDtoComparator = Comparator.comparing(PhotoDto::isChecked).reversed()
+                .thenComparing(PhotoDto::getCreatedAt);
+        photosFiltrer.sort(photoDtoComparator);
         model.addAttribute("album", album);
-        model.addAttribute("images", photos);
+        model.addAttribute("images", photosFiltrer);
         model.addAttribute("link", "/albums/modifier/" + album.getId());
         return "create-album";
     }
@@ -71,10 +82,11 @@ public class AlbumController {
     public String createAlbum(
             @RequestParam("name") String name,
             @RequestParam("description") String description,
+            @RequestParam(value = "photos" , required = false) Long[] photosId,
             Authentication authentication
     ) {
         User user = this.userService.findByEmail(authentication.getName());
-        this.albumService.create(name, description, user);
+        this.albumService.create(name, description, user, photosId);
         return "redirect:/albums";
     }
 
