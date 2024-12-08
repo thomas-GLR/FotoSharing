@@ -1,6 +1,7 @@
 package local.epul4a.fotosharing.entity;
 
 import jakarta.persistence.*;
+import local.epul4a.fotosharing.enums.PermissionLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,4 +18,5 @@ public class AlbumPartage {
     @ManyToOne
     @JoinColumn(name = "album_id", nullable = false)
     private Album album;
+    private PermissionLevel permissionLevel;
 }

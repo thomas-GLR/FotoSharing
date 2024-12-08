@@ -33,6 +33,8 @@ public class Album {
     private List<Photo> photos;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    @OneToMany(mappedBy = "album", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval=true)
+    private List<AlbumPartage> albumPartages;
 
     public Album() {
 
@@ -40,5 +42,9 @@ public class Album {
 
     public void clearPhotos() {
         photos.clear();
+    }
+
+    public void clearPartages() {
+        albumPartages.clear();
     }
 }

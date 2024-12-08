@@ -16,6 +16,7 @@ public class AlbumDto {
     private String ownerName;
     private String visibility;
     private List<PhotoDto> photos;
+    private boolean editPermission;
 
     public AlbumDto(Album album) {
         this.id = album.getId();
@@ -26,5 +27,10 @@ public class AlbumDto {
         this.photos = album.getPhotos().stream()
                 .map(currentAlbum -> new PhotoDto(currentAlbum, true))
                 .toList();
+    }
+
+    public AlbumDto(Album album, boolean editPermission) {
+        this(album);
+        this.editPermission = editPermission;
     }
 }

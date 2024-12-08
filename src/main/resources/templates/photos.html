@@ -47,6 +47,8 @@
                        title="Editer l'image" class="fa-regular fa-trash-can icon-dark btn-edit">Editer</a>
                     <a th:href="@{'/photos/delete/' + ${image.id}}" th:fileName="${image.title}" id="btnDelete"
                        title="Supprimer cette image" class="fa-regular fa-trash-can icon-dark btn-delete">Supprimer</a>
+                    <a th:href="@{'/photos/partage/' + ${image.id}}" th:fileName="${image.title}" id="btnPartage"
+                       title="Partager cette image" class="fa-regular fa-trash-can icon-dark">Partager</a>
                 </td>
             </tr>
             </tbody>
@@ -70,6 +72,7 @@
                 <th scope="col">Titre</th>
                 <th scope="col">Link</th>
                 <th scope="col">Visibilité</th>
+                <th scope="col">Action</th>
             </tr>
             </thead>
             <tbody>
@@ -84,6 +87,13 @@
                 <td>[[${image.title}]]</td>
                 <td><a th:href="@{${image.url}}">Download</a></td>
                 <td>[[${image.visibility}]]</td>
+                <td>
+                    <a th:if="${image.editPermission}" th:attr="data-url=${image.url},data-title=${image.title},
+                    data-description=${image.description},data-visibility=${image.visibility},
+                    data-created=${image.createdAt},data-updated=${image.updatedAt},data-auteur=${image.ownerName}"
+                       th:href="@{'/photos/editer/' + ${image.id}}" th:fileName="${image.title}"
+                       title="Editer l'image" class="fa-regular fa-trash-can icon-dark btn-edit">Editer</a>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -120,9 +130,9 @@
                 <td>[[${image.title}]]</td>
                 <td>
                     <a th:href="@{'/photos/valider/' + ${image.id}}"
-                       title="Supprimer cette image" class="fa-regular fa-trash-can icon-dark">Valider</a>
+                       title="Valider cette image" class="fa-regular fa-trash-can icon-dark">Valider</a>
                     <a th:href="@{'/photos/refuser/' + ${image.id}}"
-                       title="Supprimer cette image" class="fa-regular fa-trash-can icon-dark">Refuser</a>
+                       title="Refuser cette image" class="fa-regular fa-trash-can icon-dark">Refuser</a>
                     <a th:href="@{'/photos/delete/' + ${image.id}}"
                        title="Supprimer cette image" class="fa-regular fa-trash-can icon-dark">Supprimer</a>
                 </td>

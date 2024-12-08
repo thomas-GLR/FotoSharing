@@ -2,16 +2,19 @@ package local.epul4a.fotosharing.service.impl;
 
 import local.epul4a.fotosharing.dto.AlbumDto;
 import local.epul4a.fotosharing.dto.PhotoDto;
-import local.epul4a.fotosharing.entity.Album;
-import local.epul4a.fotosharing.entity.Photo;
-import local.epul4a.fotosharing.entity.User;
+import local.epul4a.fotosharing.dto.UserPartageDto;
+import local.epul4a.fotosharing.entity.*;
+import local.epul4a.fotosharing.enums.PermissionLevel;
 import local.epul4a.fotosharing.enums.Visibility;
+import local.epul4a.fotosharing.repository.AlbumPartageRepository;
 import local.epul4a.fotosharing.repository.AlbumRepository;
 import local.epul4a.fotosharing.repository.PhotoRepository;
+import local.epul4a.fotosharing.repository.UserRepository;
 import local.epul4a.fotosharing.service.PhotoService;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.time.LocalDateTime.now;
 
@@ -19,17 +22,29 @@ import static java.time.LocalDateTime.now;
 public class AlbumService {
     private final AlbumRepository albumRepository;
     private final PhotoRepository photoRepository;
-    private final PhotoService photoService;
+    private final AlbumPartageRepository albumPartageRepository;
+    private final UserRepository userRepository;
 
-    public AlbumService(AlbumRepository albumRepository, PhotoRepository photoRepository, PhotoService photoService) {
+    public AlbumService(
+            AlbumRepository albumRepository,
+            PhotoRepository photoRepository,
+            AlbumPartageRepository albumPartageRepository,
+            UserRepository userRepository) {
         this.albumRepository = albumRepository;
         this.photoRepository = photoRepository;
-        this.photoService = photoService;
+        this.albumPartageRepository = albumPartageRepository;
+        this.userRepository = userRepository;
     }
 
     public List<AlbumDto> getAllAlbum(User user) {
         return this.albumRepository.findAllAlbumForUser(user).stream()
-                .map(AlbumDto::new)
+                .map(album -> {
+                    PermissionLevel permission = album.getAlbumPartages().stream()
+                            .filter(partage -> Objects.equals(partage.getUser().getId(), user.getId()))
+                            .map(AlbumPartage::getPermissionLevel)
+                            .findFirst().orElse(PermissionLevel.VIEW);
+                    return new AlbumDto(album, permission == PermissionLevel.EDIT);
+                })
                 .toList();
     }
 
@@ -68,7 +83,51 @@ public class AlbumService {
         if (!album.getPhotos().isEmpty()) {
             album.clearPhotos();
         }
-        this.albumRepository.save(album);
+        this.albumRepository.saveAndFlush(album);
         this.albumRepository.delete(album);
+    }
+
+    public List<UserPartageDto> getUsersWithPermissions(Long id) {
+        List<User> users = this.userRepository.findAll();
+        Album album = this.albumRepository.findById(id).get();
+        Map<User, PermissionLevel> partages = this.albumPartageRepository.findAllByAlbum(album).stream()
+                .collect(Collectors.toMap(AlbumPartage::getUser, AlbumPartage::getPermissionLevel));
+        return users.stream()
+                .map(user -> {
+                    PermissionLevel permissionLevel = partages.getOrDefault(user, null);
+                    return new UserPartageDto(user, permissionLevel);
+                })
+                .toList();
+    }
+
+    public void handlePartage(Long albumId, Long userId, String permission) {
+        User user = this.userRepository.findById(userId).get();
+        Album album = this.albumRepository.findById(albumId).get();
+        Optional<AlbumPartage> partage = this.albumPartageRepository.findByAlbumAndUser(album, user);
+        PermissionLevel permissionLevel;
+        switch (permission) {
+            case "VIEW" -> permissionLevel = PermissionLevel.VIEW;
+            case "EDIT" -> permissionLevel = PermissionLevel.EDIT;
+            default -> permissionLevel = null;
+        }
+
+        AlbumPartage newPartage;
+
+        if (partage.isPresent() && permissionLevel == null) {
+            this.albumPartageRepository.delete(partage.get());
+            return;
+        }
+
+        if (partage.isEmpty()) {
+            newPartage = new AlbumPartage();
+            newPartage.setUser(user);
+            newPartage.setAlbum(album);
+        } else {
+            newPartage = partage.get();
+        }
+
+        newPartage.setPermissionLevel(permissionLevel);
+
+        this.albumPartageRepository.save(newPartage);
     }
 }

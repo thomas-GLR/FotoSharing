@@ -27,4 +27,8 @@ public class Partage {
     public Partage() {
 
     }
+
+    public Long userId() {
+        return getUser().getId();
+    }
 }

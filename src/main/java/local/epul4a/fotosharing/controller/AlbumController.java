@@ -2,6 +2,8 @@ package local.epul4a.fotosharing.controller;
 
 import local.epul4a.fotosharing.dto.AlbumDto;
 import local.epul4a.fotosharing.dto.PhotoDto;
+import local.epul4a.fotosharing.dto.UserPartageDto;
+import local.epul4a.fotosharing.entity.Album;
 import local.epul4a.fotosharing.entity.User;
 import local.epul4a.fotosharing.enums.Visibility;
 import local.epul4a.fotosharing.service.PhotoService;
@@ -106,5 +108,25 @@ public class AlbumController {
     public String deleteAlbum(@PathVariable("id") Long id) {
         this.albumService.delete(id);
         return "redirect:/albums";
+    }
+
+    @GetMapping("/albums/partage/{albumId:.+}")
+    public String shareAlbum(@PathVariable("albumId") Long id, Model model) {
+        AlbumDto album = this.albumService.getAlbum(id);
+
+        List<UserPartageDto> users = this.albumService.getUsersWithPermissions(id);
+
+        model.addAttribute("users", users);
+        model.addAttribute("album", album);
+        return "partage-albums";
+    }
+
+    @PostMapping("/albums/partage/{albumId:.+}/{userId:.+}")
+    public String partageHandler(
+            @PathVariable Long albumId,
+            @PathVariable Long userId,
+            @RequestParam("permission") String permission) {
+        this.albumService.handlePartage(albumId, userId, permission);
+        return "redirect:/albums/partage/" + albumId;
     }
 }

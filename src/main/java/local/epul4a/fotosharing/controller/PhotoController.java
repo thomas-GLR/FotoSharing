@@ -1,6 +1,9 @@
 package local.epul4a.fotosharing.controller;
 
 import local.epul4a.fotosharing.dto.PhotoDto;
+import local.epul4a.fotosharing.dto.UserDto;
+import local.epul4a.fotosharing.dto.UserPartageDto;
+import local.epul4a.fotosharing.entity.Photo;
 import local.epul4a.fotosharing.entity.User;
 import local.epul4a.fotosharing.enums.Visibility;
 import local.epul4a.fotosharing.service.PartageService;
@@ -120,5 +123,25 @@ public class PhotoController {
     public String noValidateImage(@PathVariable Long id) {
         this.photoService.validatePhoto(id, false);
         return "redirect:/photos";
+    }
+
+    @GetMapping("/photos/partage/{photoId:.+}")
+    public String partagePage(@PathVariable Long photoId, Model model) {
+        Photo photo = this.photoService.getPhoto(photoId);
+
+        List<UserPartageDto> users = this.partageService.getUsersWithPermissions(photo);
+
+        model.addAttribute("users", users);
+        model.addAttribute("photo", new PhotoDto(photo));
+        return "partage-photos";
+    }
+
+    @PostMapping("/photos/partage/{photoId:.+}/{userId:.+}")
+    public String partageHandler(
+            @PathVariable Long photoId,
+            @PathVariable Long userId,
+            @RequestParam("permission") String permission) {
+        this.partageService.handlePartage(photoId, userId, permission);
+        return "redirect:/photos/partage/" + photoId;
     }
 }
