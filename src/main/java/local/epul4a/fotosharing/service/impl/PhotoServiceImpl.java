@@ -58,4 +58,8 @@ public class PhotoServiceImpl implements PhotoService {
                 .map(PhotoDto::new)
                 .toList();
     }
+
+    public Photo getPhoto(Long id) {
+        return this.photoRepository.findById(id).get();
+    }
 }

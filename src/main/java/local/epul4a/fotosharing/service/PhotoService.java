@@ -1,6 +1,7 @@
 package local.epul4a.fotosharing.service;
 
 import local.epul4a.fotosharing.dto.PhotoDto;
+import local.epul4a.fotosharing.entity.Photo;
 import local.epul4a.fotosharing.entity.User;
 import local.epul4a.fotosharing.enums.Visibility;
 
@@ -13,4 +14,5 @@ public interface PhotoService {
     public void delete(Long id);
     public List<PhotoDto> getPhotoForValidation();
     public void validatePhoto(Long id, boolean validate);
+    public Photo getPhoto(Long id);
 }

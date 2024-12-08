@@ -38,10 +38,12 @@
                 <td>[[${album.visibility}]]</td>
                 <td>[[${album.ownerName}]]</td>
                 <td>
-                    <a th:if="${album.ownerName == currentUser}" th:href="@{'/albums/modifier/' + ${album.id}}" id="btnEdit"
+                    <a th:if="${album.ownerName == currentUser || album.isEditPermission()}" th:href="@{'/albums/modifier/' + ${album.id}}" id="btnEdit"
                        title="Editer l'image" class="fa-regular fa-trash-can icon-dark btn-edit">Editer</a>
                     <a th:if="${album.ownerName == currentUser}" th:href="@{'/albums/delete/' + ${album.id}}" id="btnDelete"
                        title="Supprimer cette image" class="fa-regular fa-trash-can icon-dark btn-delete">Supprimer</a>
+                    <a th:if="${album.ownerName == currentUser}" th:href="@{'/albums/partage/' + ${album.id}}" id="btnPartage"
+                       title="Partager cette image" class="fa-regular fa-trash-can icon-dark">Partager</a>
                 </td>
             </tr>
             </tbody>

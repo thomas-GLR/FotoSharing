@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Getter
 @Setter
@@ -27,6 +28,8 @@ public class Photo {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private boolean validate;
+    @OneToMany(mappedBy="photo", fetch=FetchType.EAGER, orphanRemoval=true)
+    private List<Partage> partages;
 
     public Photo() {
 
